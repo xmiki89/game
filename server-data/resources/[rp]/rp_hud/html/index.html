@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <title>HUD</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div id="hud" class="hidden">
+        <!-- oben rechts: Server-ID und Uhrzeit -->
+        <div class="top">
+            <div class="id-badge">
+                <span class="id-label">ID</span>
+                <span id="serverId">-</span>
+            </div>
+            <div class="clock">
+                <span id="time">--:--</span>
+                <span id="date">--.--.----</span>
+            </div>
+        </div>
+
+        <!-- unten links: Geld und Job -->
+        <div class="bottom">
+            <div class="name" id="name">Unbekannt</div>
+            <div class="stats">
+                <div class="stat">
+                    <span class="dot cash"></span>
+                    <span class="stat-label">Bargeld</span>
+                    <span class="stat-value" id="cash">0$</span>
+                </div>
+                <div class="stat">
+                    <span class="dot bank"></span>
+                    <span class="stat-label">Bank</span>
+                    <span class="stat-value" id="bank">0$</span>
+                </div>
+                <div class="stat">
+                    <span class="dot job"></span>
+                    <span class="stat-label">Job</span>
+                    <span class="stat-value" id="job">Arbeitslos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

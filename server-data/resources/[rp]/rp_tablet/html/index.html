@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tablet</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div id="tablet" class="hidden">
+        <div class="backdrop"></div>
+
+        <div class="device">
+            <aside class="sidebar">
+                <div class="brand">
+                    <div class="brand-mark">LS</div>
+                    <div class="brand-text">
+                        <strong id="brandName">Los Santos Life</strong>
+                        <span>Tablet</span>
+                    </div>
+                </div>
+
+                <nav id="nav">
+                    <button class="nav-item active" data-app="overview"><span class="dot"></span>Übersicht</button>
+                    <button class="nav-item" data-app="transfer"><span class="dot"></span>Überweisen</button>
+                    <button class="nav-item" data-app="character"><span class="dot"></span>Charakter</button>
+                    <button class="nav-item" data-app="rules"><span class="dot"></span>Regeln</button>
+                    <button class="nav-item" data-app="server"><span class="dot"></span>Server</button>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <span id="onlineBadge">0 / 32 online</span>
+                    <button id="closeBtn" class="close">Schließen (ESC)</button>
+                </div>
+            </aside>
+
+            <main class="content">
+                <!-- Übersicht -->
+                <section class="panel active" data-panel="overview">
+                    <header class="panel-head">
+                        <h2>Übersicht</h2>
+                        <p id="welcome">Willkommen zurück.</p>
+                    </header>
+
+                    <div class="grid">
+                        <div class="tile">
+                            <span class="tile-label">Bargeld</span>
+                            <span class="tile-value" id="ovCash">0$</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Bank</span>
+                            <span class="tile-value" id="ovBank">0$</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Job</span>
+                            <span class="tile-value small" id="ovJob">-</span>
+                        </div>
+                        <div class="tile">
+                            <span class="tile-label">Server-ID</span>
+                            <span class="tile-value" id="ovId">-</span>
+                        </div>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-row"><span>Name</span><strong id="ovName">-</strong></div>
+                        <div class="info-row"><span>Geburtsdatum</span><strong id="ovBirth">-</strong></div>
+                        <div class="info-row"><span>Geschlecht</span><strong id="ovGender">-</strong></div>
+                    </div>
+                </section>
+
+                <!-- Überweisen -->
+                <section class="panel" data-panel="transfer">
+                    <header class="panel-head">
+                        <h2>Überweisen</h2>
+                        <p>Bankguthaben an einen anderen Spieler senden.</p>
+                    </header>
+
+                    <form id="transferForm" autocomplete="off">
+                        <div class="row">
+                            <label>Empfänger (Server-ID)
+                                <input id="targetId" inputmode="numeric" placeholder="z. B. 4" spellcheck="false">
+                            </label>
+                            <label>Betrag
+                                <input id="amount" inputmode="numeric" placeholder="z. B. 250" spellcheck="false">
+                            </label>
+                        </div>
+
+                        <div class="quick" id="quickAmounts">
+                            <button type="button" data-amount="100">100$</button>
+                            <button type="button" data-amount="500">500$</button>
+                            <button type="button" data-amount="1000">1.000$</button>
+                            <button type="button" data-amount="5000">5.000$</button>
+                        </div>
+
+                        <button type="submit" class="primary" id="transferBtn">Überweisung senden</button>
+                        <div class="feedback" id="transferFeedback"></div>
+                    </form>
+
+                    <div class="info-row small">
+                        <span>Verfügbar auf der Bank</span>
+                        <strong id="trBank">0$</strong>
+                    </div>
+                </section>
+
+                <!-- Charakter -->
+                <section class="panel" data-panel="character">
+                    <header class="panel-head">
+                        <h2>Charakter</h2>
+                        <p>Deine Daten auf diesem Server.</p>
+                    </header>
+
+                    <div class="info-list">
+                        <div class="info-row"><span>Vorname</span><strong id="chFirst">-</strong></div>
+                        <div class="info-row"><span>Nachname</span><strong id="chLast">-</strong></div>
+                        <div class="info-row"><span>Geburtsdatum</span><strong id="chBirth">-</strong></div>
+                        <div class="info-row"><span>Geschlecht</span><strong id="chGender">-</strong></div>
+                        <div class="info-row"><span>Job</span><strong id="chJob">-</strong></div>
+                        <div class="info-row"><span>Server-ID</span><strong id="chId">-</strong></div>
+                    </div>
+
+                    <p class="note">Dein Charakter wird automatisch gespeichert. Geld und Job bleiben beim nächsten Login erhalten.</p>
+                </section>
+
+                <!-- Regeln -->
+                <section class="panel" data-panel="rules">
+                    <header class="panel-head">
+                        <h2>Regeln</h2>
+                        <p>Wer hier spielt, akzeptiert diese Regeln.</p>
+                    </header>
+
+                    <ol class="rules">
+                        <li><strong>Roleplay statt Reallife:</strong> Bleib immer in deiner Rolle. Dein Charakter kennt deinen echten Namen nicht.</li>
+                        <li><strong>Kein RDM / VDM:</strong> Niemanden ohne RP-Hintergrund töten oder überfahren.</li>
+                        <li><strong>Kein Powergaming:</strong> Keine übermenschlichen Fähigkeiten, keine erzwungenen Handlungen an anderen.</li>
+                        <li><strong>Kein Metagaming:</strong> Kein Wissen aus Discord, Streams oder OOC-Gesprächen im Spiel nutzen.</li>
+                        <li><strong>Fear RP:</strong> Bei Waffen bedroht verhältst du dich ängstlich und kooperativ.</li>
+                        <li><strong>Wert auf das Leben:</strong> Verletzte Charaktere spielen ihre Verletzungen aus.</li>
+                        <li><strong>Fahrzeuge realistisch bewegen:</strong> Kein Dauer-Rasen durch die Stadt, kein Sprüngen mit Supersportwagen.</li>
+                        <li><strong>OOC getrennt halten:</strong> OOC nur im dafür vorgesehenen Chat, nie mitten in einer Szene.</li>
+                        <li><strong>Bugusing verboten:</strong> Melde Fehler, statt sie auszunutzen.</li>
+                        <li><strong>Respekt:</strong> Keine Beleidigungen, Diskriminierung oder Belästigung – auch nicht im RP.</li>
+                    </ol>
+                </section>
+
+                <!-- Server -->
+                <section class="panel" data-panel="server">
+                    <header class="panel-head">
+                        <h2>Server</h2>
+                        <p>Informationen zu diesem Server.</p>
+                    </header>
+
+                    <div class="info-list">
+                        <div class="info-row"><span>Servername</span><strong id="svName">-</strong></div>
+                        <div class="info-row"><span>Framework</span><strong>Standalone (eigenes RP-Framework)</strong></div>
+                        <div class="info-row"><span>Spieler online</span><strong id="svPlayers">-</strong></div>
+                        <div class="info-row"><span>Version</span><strong>1.0.0</strong></div>
+                    </div>
+
+                    <p class="note">Erweiterbar um Jobs, Fahrzeughandel, Wohnungen und Fraktionen – das Framework ist vollständig selbst geschrieben.</p>
+                </section>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

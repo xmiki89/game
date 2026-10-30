@@ -1,0 +1,8 @@
+# FXServer Laufzeitdateien (bei Bedarf neu von runtime.fivem.net laden)
+/FXServer.exe
+/*.dll
+/citizen/
+/components.json
+
+# Gespeicherte Spielerdaten (enthalten Spieler-Identifiers, bleiben lokal)
+server-data/resources/\[rp\]/rp_core/data/players.json

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Charakter erstellen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="hidden">
+        <div class="backdrop"></div>
+
+        <div class="card">
+            <header>
+                <span class="tag">Los Santos Life</span>
+                <h1>Charakter erstellen</h1>
+                <p>Erstelle deinen Charakter, bevor du die Stadt betrittst.</p>
+            </header>
+
+            <form id="form" autocomplete="off">
+                <div class="row">
+                    <label>Vorname
+                        <input id="firstName" maxlength="24" placeholder="Max" spellcheck="false">
+                    </label>
+                    <label>Nachname
+                        <input id="lastName" maxlength="24" placeholder="Mustermann" spellcheck="false">
+                    </label>
+                </div>
+
+                <div class="row">
+                    <label>Geburtsdatum
+                        <input id="birthdate" inputmode="numeric" maxlength="10" placeholder="TT.MM.JJJJ" spellcheck="false">
+                    </label>
+                    <label>Geschlecht
+                        <div class="gender">
+                            <button type="button" class="gender-btn active" data-gender="m">Männlich</button>
+                            <button type="button" class="gender-btn" data-gender="f">Weiblich</button>
+                        </div>
+                    </label>
+                </div>
+
+                <p class="hint">Dein Name ist im Rollenspiel sichtbar und kann später nicht frei geändert werden.</p>
+
+                <div id="error" class="error"></div>
+
+                <button type="submit" id="submit" class="submit">Charakter erstellen</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
