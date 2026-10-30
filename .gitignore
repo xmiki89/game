@@ -3,6 +3,7 @@
 /*.dll
 /citizen/
 /components.json
+/server-monitor-token.key
 
 # Gespeicherte Spielerdaten (enthalten Spieler-Identifiers, bleiben lokal)
 server-data/resources/\[rp\]/rp_core/data/players.json

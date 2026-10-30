@@ -97,6 +97,17 @@ local cash = exports.rp_core:GetMoney(source, 'cash')  -- Kontostand lesen
 Clientseitig verschickt `rp_core` bei jeder Änderung das Event `rp_core:client:profile`
 (enthält `serverId`, `firstName`, `lastName`, `birthdate`, `gender`, `job`, `cash`, `bank`).
 
+## Wenn der Server nicht startet
+
+| Meldung | Ursache / Lösung |
+| --- | --- |
+| `Could not authenticate server license key. Invalid key format specified.` | In `server.cfg` steht noch `DEIN_LIZENZKEY_HIER`. Key auf <https://keymaster.fivem.net> erstellen und eintragen. `start-server.bat` prüft das inzwischen und zeigt eine Anleitung. |
+| `Could not authenticate server license key. Invalid key specified.` | Key ist falsch abgetippt, abgelaufen oder gehört zu einem anderen Server – neu erstellen. |
+| `Couldn't find resource rp_core` / nur wenige Ressourcen gefunden | FXServer wurde aus dem falschen Ordner gestartet. Immer aus `server-data` starten (`start-server.bat` macht das automatisch). |
+| `Failed to bind on port 30120` | Port ist belegt (oft ein noch laufender alter Server). Alle `FXServer.exe` im Task-Manager beenden. |
+| Server läuft, Client verbindet nicht von außen | Port `30120` TCP **und** UDP in der Windows-Firewall freigeben, ggf. Router-Portfreigabe einrichten. |
+| `players.json` bleibt leer | Speicherung erfolgt alle 5 Minuten und beim Verlassen des Servers – vorher `/quit` oder Server ordentlich stoppen. |
+
 ## Nächste Ausbaustufen
 
 Das Framework ist bewusst klein gehalten, damit Jobs, Fahrzeughandel, Immobilien oder Fraktionen
