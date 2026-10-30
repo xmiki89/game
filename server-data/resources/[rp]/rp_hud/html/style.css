@@ -92,7 +92,7 @@ body {
 
 .bottom {
     position: absolute;
-    left: 8px;
+    right: 32px;
     bottom: 28px;
     min-width: 248px;
     padding: 14px 16px 15px;
