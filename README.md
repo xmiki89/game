@@ -11,6 +11,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | `rp_character` | Charaktererstellung beim ersten Join (Vor-/Nachname, Geburtsdatum, Geschlecht), Model + Spawn |
 | `rp_hud` | HUD: Bargeld, Bank, Job, Server-ID, Uhrzeit |
 | `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Überweisen, Charakter, Regeln, Server |
+| `mapmanager`, `spawnmanager`, `chat` | offizielle Cfx.re-Basissysteme – ohne sie spawnt kein Spieler und es gibt keinen Chat |
 
 ## Voraussetzungen
 
@@ -20,11 +21,16 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 
 ## Installation
 
-1. **Lizenzschlüssel eintragen** – in [`server-data/server.cfg`](server-data/server.cfg):
+1. **Lizenzschlüssel eintragen** – in der Datei `server-data/license.cfg`
+   (die `server.cfg` lädt sie per `exec license.cfg`):
 
    ```
    sv_licenseKey "DEIN_LIZENZKEY_HIER"
    ```
+
+   `license.cfg` steht in `.gitignore` und landet deshalb nicht auf GitHub – als Vorlage dient
+   [`license.example.cfg`](server-data/license.example.cfg).`start-server.bat` legt sie beim ersten
+   Start automatisch an.
 
 2. **Admin eintragen** (optional) – eigene Lizenz in derselben Datei aktivieren:
 
@@ -77,7 +83,13 @@ Alle Daten werden alle 5 Minuten und beim Verlassen des Servers gespeichert.
 FXServer.exe, *.dll, citizen/     FiveM-Server-Build (nicht im Git)
 server-data/
 ├── server.cfg                    Serverkonfiguration
+├── license.cfg                   Lizenzschlüssel (nicht im Git)
 └── resources/
+    ├── [managers]/
+    │   ├── mapmanager/           offiziell: Map-Streaming
+    │   └── spawnmanager/         offiziell: Spieler-Spawning
+    ├── [system]/
+    │   └── chat/                 offiziell: Chat
     └── [rp]/
         ├── rp_core/              Framework: Profile, Geld, Speicherung
         ├── rp_character/         Charaktererstellung + Spawn
@@ -107,6 +119,9 @@ Clientseitig verschickt `rp_core` bei jeder Änderung das Event `rp_core:client:
 | `Failed to bind on port 30120` | Port ist belegt (oft ein noch laufender alter Server). Alle `FXServer.exe` im Task-Manager beenden. |
 | Server läuft, Client verbindet nicht von außen | Port `30120` TCP **und** UDP in der Windows-Firewall freigeben, ggf. Router-Portfreigabe einrichten. |
 | `players.json` bleibt leer | Speicherung erfolgt alle 5 Minuten und beim Verlassen des Servers – vorher `/quit` oder Server ordentlich stoppen. |
+| `Couldn't find resource mapmanager / chat / spawnmanager` | Diese Pflicht-Ressourcen fehlen in `server-data/resources`. Sie liegen hier bereits bei – wenn die Meldung kommt, wurde der falsche `resources`-Ordner geladen. |
+| txAdmin: `Failed to get processes tree usage data` / `wmic` fehlt | Harmlos, nur die CPU-/RAM-Statistik im txAdmin-Dashboard fehlt. Fix: Windows-Einstellungen → „Optionale Features“ → „WMIC“ installieren, oder Meldung ignorieren. |
+| Spieler bleibt im Ladebildschirm | `spawnmanager` läuft nicht (siehe oben) – er beendet den Ladebildschirm. |
 
 ## Nächste Ausbaustufen
 

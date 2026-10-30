@@ -133,13 +133,6 @@ function GetProfile(src)
     Players[src] = profile
     JoinedAt[src] = os.time()
 
-    if profile.created and #profile.firstName > 0 then
-        local wanted = profile.firstName .. ' ' .. profile.lastName
-        if GetPlayerName(src) ~= wanted then
-            SetPlayerName(src, wanted)
-        end
-    end
-
     return profile
 end
 
@@ -278,7 +271,6 @@ RegisterNetEvent('rp_core:server:characterSave', function(payload)
     profile.created = true
 
     saveDatabase()
-    SetPlayerName(src, firstName .. ' ' .. lastName)
     pushProfile(src)
 
     TriggerClientEvent('rp_character:client:saved', src, true)

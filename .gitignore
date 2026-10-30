@@ -4,6 +4,15 @@
 /citizen/
 /components.json
 /server-monitor-token.key
+/server-tls.crt
+/server-tls.key
+
+# Laufzeit-Dateien von FXServer
+/server-data/cache/
+/server-data/.replxx_history
+
+# Lizenzschluessel (gehoert nicht in ein oeffentliches Repo)
+/server-data/license.cfg
 
 # Gespeicherte Spielerdaten (enthalten Spieler-Identifiers, bleiben lokal)
 server-data/resources/\[rp\]/rp_core/data/players.json
