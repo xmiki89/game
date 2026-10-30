@@ -23,10 +23,11 @@
 
                 <nav id="nav">
                     <button class="nav-item active" data-app="overview"><span class="dot"></span>Übersicht</button>
+                    <button class="nav-item" data-app="jobs"><span class="dot"></span>Jobs</button>
+                    <button class="nav-item" data-app="faction"><span class="dot"></span>Fraktion</button>
                     <button class="nav-item" data-app="transfer"><span class="dot"></span>Überweisen</button>
                     <button class="nav-item" data-app="character"><span class="dot"></span>Charakter</button>
                     <button class="nav-item" data-app="rules"><span class="dot"></span>Regeln</button>
-                    <button class="nav-item" data-app="server"><span class="dot"></span>Server</button>
                 </nav>
 
                 <div class="sidebar-footer">
@@ -66,6 +67,52 @@
                         <div class="info-row"><span>Name</span><strong id="ovName">-</strong></div>
                         <div class="info-row"><span>Geburtsdatum</span><strong id="ovBirth">-</strong></div>
                         <div class="info-row"><span>Geschlecht</span><strong id="ovGender">-</strong></div>
+                    </div>
+                </section>
+
+                <!-- Jobs -->
+                <section class="panel" data-panel="jobs">
+                    <header class="panel-head">
+                        <h2>Jobs</h2>
+                        <p>Klicke auf einen Job, um zu sehen, wo du arbeiten kannst.</p>
+                    </header>
+
+                    <div class="job-layout">
+                        <div class="job-list" id="jobList"></div>
+
+                        <div class="job-detail">
+                            <div class="empty-state" id="jobHint">
+                                <strong>Kein Job ausgewählt</strong>
+                                <span>Wähle links einen Job aus, um Standort und Verdienst zu sehen.</span>
+                            </div>
+
+                            <div id="jobCard" class="hidden">
+                                <h3 id="jobTitle">-</h3>
+                                <div class="job-company" id="jobCompany">-</div>
+                                <p class="job-description" id="jobDescription">-</p>
+
+                                <div class="info-list compact">
+                                    <div class="info-row"><span>Standort</span><strong id="jobPlace">-</strong></div>
+                                    <div class="info-row"><span>Verdienst</span><strong id="jobPay">-</strong></div>
+                                </div>
+
+                                <button type="button" class="primary" id="jobRoute">Route auf der Karte setzen</button>
+                                <p class="note">Das Tablet schließt sich und die Route erscheint auf der Karte.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Fraktion -->
+                <section class="panel" data-panel="faction">
+                    <header class="panel-head">
+                        <h2>Fraktion</h2>
+                        <p>Deine Fraktion, Mitglieder und Aufgaben.</p>
+                    </header>
+
+                    <div class="empty-state">
+                        <strong>Noch keine Fraktion</strong>
+                        <span>Fraktionen wie Polizei, Feuerwehr oder Gangs werden später ergänzt.</span>
                     </div>
                 </section>
 
@@ -143,22 +190,7 @@
                     </ol>
                 </section>
 
-                <!-- Server -->
-                <section class="panel" data-panel="server">
-                    <header class="panel-head">
-                        <h2>Server</h2>
-                        <p>Informationen zu diesem Server.</p>
-                    </header>
-
-                    <div class="info-list">
-                        <div class="info-row"><span>Servername</span><strong id="svName">-</strong></div>
-                        <div class="info-row"><span>Framework</span><strong>Standalone (eigenes RP-Framework)</strong></div>
-                        <div class="info-row"><span>Spieler online</span><strong id="svPlayers">-</strong></div>
-                        <div class="info-row"><span>Version</span><strong>1.0.0</strong></div>
-                    </div>
-
-                    <p class="note">Erweiterbar um Jobs, Fahrzeughandel, Wohnungen und Fraktionen – das Framework ist vollständig selbst geschrieben.</p>
-                </section>
+                <!-- Ende der Panels -->
             </main>
         </div>
     </div>

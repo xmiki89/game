@@ -10,9 +10,15 @@ const transferBtn = document.getElementById('transferBtn');
 const feedback = document.getElementById('transferFeedback');
 const targetIdInput = document.getElementById('targetId');
 const amountInput = document.getElementById('amount');
+const jobList = document.getElementById('jobList');
+const jobHint = document.getElementById('jobHint');
+const jobCard = document.getElementById('jobCard');
+const jobRouteBtn = document.getElementById('jobRoute');
 
 let profile = null;
 let serverInfo = null;
+let jobs = [];
+let selectedJobId = null;
 let sending = false;
 
 /* ------------------------------------------------------------ Hilfen */
@@ -88,10 +94,65 @@ function renderServerInfo(data) {
     if (!data) return;
 
     setText('brandName', data.name || 'Los Santos Life');
-    setText('svName', data.name || '-');
-    setText('svPlayers', `${data.players ?? 0} / ${data.max ?? 32}`);
     setText('onlineBadge', `${data.players ?? 0} / ${data.max ?? 32} online`);
 }
+
+/* ------------------------------------------------------------ Jobs */
+
+function selectJob(jobId) {
+    const job = jobs.find((entry) => entry.id === jobId);
+    if (!job) return;
+
+    selectedJobId = job.id;
+    jobHint.classList.add('hidden');
+    jobCard.classList.remove('hidden');
+
+    document.querySelectorAll('.job-item').forEach((item) => {
+        item.classList.toggle('active', item.dataset.id === job.id);
+    });
+
+    setText('jobTitle', job.label);
+    setText('jobCompany', job.company);
+    setText('jobDescription', job.description);
+    setText('jobPlace', job.place);
+    setText('jobPay', job.pay);
+}
+
+function renderJobs(list) {
+    jobs = Array.isArray(list) ? list : [];
+    jobList.replaceChildren();
+
+    if (!jobs.length) {
+        jobHint.classList.remove('hidden');
+        jobCard.classList.add('hidden');
+        jobHint.querySelector('strong').textContent = 'Keine Jobs eingetragen';
+        return;
+    }
+
+    jobs.forEach((job) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'job-item';
+        button.dataset.id = job.id;
+
+        const label = document.createElement('span');
+        label.className = 'job-item-label';
+        label.textContent = job.label;
+
+        const company = document.createElement('span');
+        company.className = 'job-item-company';
+        company.textContent = job.company;
+
+        button.append(label, company);
+        button.addEventListener('click', () => selectJob(job.id));
+        jobList.append(button);
+    });
+}
+
+jobRouteBtn.addEventListener('click', () => {
+    if (!selectedJobId) return;
+    post('waypoint', { id: selectedJobId });
+});
 
 /* ------------------------------------------------------------ Überweisung */
 
@@ -160,6 +221,10 @@ window.addEventListener('message', (event) => {
 
     if (data.action === 'profile') {
         renderProfile(data.data);
+    }
+
+    if (data.action === 'jobs') {
+        renderJobs(data.data);
     }
 
     if (data.action === 'serverInfo') {

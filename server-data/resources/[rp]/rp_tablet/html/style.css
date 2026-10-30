@@ -330,6 +330,115 @@ nav {
     color: #74869a;
 }
 
+/* Jobs */
+
+.job-layout {
+    display: grid;
+    grid-template-columns: 235px 1fr;
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.job-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.job-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 14px;
+    font-family: inherit;
+    text-align: left;
+    color: #cfdde8;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 140ms ease;
+}
+
+.job-item:hover {
+    border-color: rgba(111, 212, 255, 0.35);
+    background: rgba(111, 212, 255, 0.07);
+}
+
+.job-item.active {
+    border-color: rgba(111, 212, 255, 0.6);
+    background: rgba(111, 212, 255, 0.12);
+    box-shadow: inset 2px 0 0 #6fd4ff;
+}
+
+.job-item-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #eaf7ff;
+}
+
+.job-item-company {
+    font-size: 11px;
+    color: #7d8fa0;
+}
+
+.job-detail {
+    min-height: 240px;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.022);
+}
+
+.job-detail h3 {
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.job-company {
+    margin-top: 5px;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #6fd4ff;
+}
+
+.job-description {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #b9c9d6;
+}
+
+.info-list.compact {
+    margin-top: 16px;
+}
+
+#jobRoute {
+    margin-top: 18px;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.empty-state strong {
+    font-size: 14px;
+    color: #eaf7ff;
+}
+
+.empty-state span {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #8497a8;
+}
+
 /* Überweisung */
 
 form {

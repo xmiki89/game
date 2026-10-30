@@ -10,7 +10,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | `rp_core` | Spielerdaten, Bargeld + Bank, Job, Speicherung (`data/players.json`), Banküberweisungen |
 | `rp_character` | Charaktererstellung beim ersten Join (Vor-/Nachname, Geburtsdatum, Geschlecht), Model + Spawn |
 | `rp_hud` | HUD: Bargeld, Bank, Job, Server-ID, Uhrzeit |
-| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Überweisen, Charakter, Regeln, Server |
+| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (noch leer), Überweisen, Charakter, Regeln |
 | `mapmanager`, `spawnmanager`, `chat` | offizielle Cfx.re-Basissysteme – ohne sie spawnt kein Spieler und es gibt keinen Chat |
 
 ## Voraussetzungen
