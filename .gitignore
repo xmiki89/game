@@ -11,8 +11,9 @@
 /server-data/cache/
 /server-data/.replxx_history
 
-# Lizenzschluessel (gehoert nicht in ein oeffentliches Repo)
+# Lizenzschluessel und Admin-Passwort (gehoeren nicht in ein oeffentliches Repo)
 /server-data/license.cfg
+/server-data/admin.cfg
 
 # Gespeicherte Spielerdaten (enthalten Spieler-Identifiers, bleiben lokal)
 server-data/resources/\[rp\]/rp_core/data/players.json

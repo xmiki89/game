@@ -134,8 +134,18 @@ local function setOpen(state)
         SendNUIMessage({ action = 'jobs', data = jobListForUi() })
         sendFactionInfo()
         sendServerInfo()
+
+        -- Admin-Rechte und Spielerliste beim Oeffnen abfragen
+        TriggerServerEvent('rp_core:server:requestAdmin')
     end
 end
+
+-- Antwort vom Server: Admin-Rechte + Liste aller Spieler online
+RegisterNetEvent('rp_core:client:adminData', function(data)
+    if isOpen then
+        SendNUIMessage({ action = 'admin', data = data })
+    end
+end)
 
 RegisterNetEvent('rp_core:client:profile', function(data)
     profile = data
@@ -199,6 +209,38 @@ RegisterNUICallback('waypoint', function(data, cb)
     cb({ ok = true })
     SetNewWaypoint(job.coords.x, job.coords.y)
     setOpen(false)
+end)
+
+-- Admin: Fraktion eines Spielers setzen
+RegisterNUICallback('adminSetFaction', function(data, cb)
+    local targetId = tonumber(data and data.targetId)
+    local factionId = tonumber(data and data.factionId)
+
+    if not targetId or not factionId then
+        cb({ ok = false })
+        return
+    end
+
+    cb({ ok = true })
+    TriggerServerEvent('rp_core:server:adminSetFaction', targetId, factionId)
+end)
+
+-- Admin: Spieler zum HQ seiner Fraktion bringen
+RegisterNUICallback('adminSpawn', function(data, cb)
+    local targetId = tonumber(data and data.targetId)
+    if not targetId then
+        cb({ ok = false })
+        return
+    end
+
+    cb({ ok = true })
+    TriggerServerEvent('rp_core:server:adminSpawnHq', targetId)
+end)
+
+-- Admin: Liste neu laden
+RegisterNUICallback('adminRefresh', function(_, cb)
+    cb({ ok = true })
+    TriggerServerEvent('rp_core:server:requestAdmin')
 end)
 
 -- Fraktion anklicken: Route zum Hauptquartier setzen und Tablet schliessen

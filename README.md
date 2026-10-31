@@ -10,7 +10,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | `rp_core` | Spielerdaten, Bargeld + Bank, Job, Speicherung (`data/players.json`), Banküberweisungen |
 | `rp_character` | Charaktererstellung beim ersten Join (Vor-/Nachname, Geburtsdatum, Geschlecht), Model + Spawn |
 | `rp_hud` | HUD: Bargeld, Bank, Job, Server-ID, Uhrzeit |
-| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (LSPD mit HQ + Route), Überweisen, Charakter, Regeln |
+| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (LSPD mit HQ + Route), Überweisen, Charakter, Regeln, Admin (nur nach `/admin <Passwort>`) |
 | `rp_menu` | Kreismenü auf **G** – erscheint nur für Fraktion Nr. 1 (LSPD), aktuell mit dem Eintrag **Bodycam** (noch ohne Funktion) |
 | `mapmanager`, `spawnmanager`, `chat` | offizielle Cfx.re-Basissysteme – ohne sie spawnt kein Spieler und es gibt keinen Chat |
 
@@ -33,13 +33,23 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
    [`license.example.cfg`](server-data/license.example.cfg).`start-server.bat` legt sie beim ersten
    Start automatisch an.
 
-2. **Admin eintragen** (optional) – eigene Lizenz in derselben Datei aktivieren:
+2. **Admin-Passwort festlegen** (optional) – in `server-data/admin.cfg`
+   (Vorlage: [`admin.example.cfg`](server-data/admin.example.cfg), wird ebenfalls nicht committet):
+
+   ```
+   setr rp_adminPassword "dein-passwort"
+   ```
+
+   Damit schaltest du im Spiel per `/admin dein-passwort` den Admin-Tab im Tablet frei
+   (Details unter [Admin-Modus](#admin-modus)).
+
+3. **ACE-Admin eintragen** (optional) – eigene Lizenz in `license.cfg` aktivieren:
 
    ```
    add_principal identifier.license:DEINE_LICENSE group.admin
    ```
 
-3. **Server starten** – einfach [`start-server.bat`](start-server.bat) doppelklicken, oder in der Konsole:
+4. **Server starten** – einfach [`start-server.bat`](start-server.bat) doppelklicken, oder in der Konsole:
 
    ```
    cd server-data
@@ -50,7 +60,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
    Ordner `resources/` nicht. Beim Start müssen die Zeilen
    `Started resource rp_core`, `rp_character`, `rp_hud`, `rp_tablet` und `rp_menu` erscheinen.
 
-4. **Verbinden** – im FiveM-Client mit der Konsole (`F8`):
+5. **Verbinden** – im FiveM-Client mit der Konsole (`F8`):
 
    ```
    connect localhost:30120
@@ -66,12 +76,42 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | Tablet schließen | `ESC` |
 | Kreismenü öffnen/schließen (nur Fraktion 1) | **G** (oder Chat-Befehl `/factionmenu`) |
 | Kreismenü schließen | `ESC` |
+| Admin-Modus freischalten | Chat: `/admin <Passwort>` |
 
 Die Taste **G** lässt sich in den FiveM-Einstellungen unter *Einstellungen → Tastenbelegung → FiveM*
 neu belegen. Der Eintrag heißt dort „Kreismenü (Fraktion)“.
 
 Die Taste ist in [`rp_core/config.lua`](server-data/resources/%5Brp%5D/rp_core/config.lua) über `Config.TabletControl` änderbar
 (173 = Pfeil runter, siehe [Control-Liste](https://docs.fivem.net/docs/game-references/controls/)).
+
+## Admin-Modus
+
+Der Admin-Tab im Tablet wird per Chat-Befehl freigeschaltet:
+
+```
+/admin nero89
+```
+
+Das Passwort steht in `server-data/admin.cfg` (nicht im Git, Vorlage: [`admin.example.cfg`](server-data/admin.example.cfg)): 
+
+```
+setr rp_adminPassword "dein-passwort"
+```
+
+Nach korrektem Passwort erscheint im Tablet der Tab **Admin**:
+
+| Funktion | Wirkung |
+| --- | --- |
+| Liste | alle Spieler online mit RP-Name und aktueller Fraktion |
+| Fraktion wählen + **Setzen** | schreibt die Fraktion ins Profil (sofort sichtbar, wird gespeichert) |
+| **Spawn HQ** | setzt den Spieler an das Hauptquartier seiner Fraktion (Blickrichtung aus `Config.Factions`) |
+| Aktualisieren | holt die Liste neu (Spieler betreten/verlassen den Server) |
+
+Der Admin-Modus gilt nur für die laufende Sitzung – nach einem Reconnect wieder `/admin` eingeben.
+Träger der ACE-Berechtigung `rp.admin` sehen den Tab ohne Passwort.
+
+> Hinweis: Der Befehl wird im Chat getippt und taucht deshalb in Chat-Logs auf.
+> Verwende ein eigenes Passwort, das du nirgendwo sonst benutzt.
 
 ## Fraktionen
 
@@ -115,6 +155,7 @@ FXServer.exe, *.dll, citizen/     FiveM-Server-Build (nicht im Git)
 server-data/
 ├── server.cfg                    Serverkonfiguration
 ├── license.cfg                   Lizenzschlüssel (nicht im Git)
+├── admin.cfg                     Admin-Passwort für /admin (nicht im Git)
 └── resources/
     ├── [managers]/
     │   ├── mapmanager/           offiziell: Map-Streaming

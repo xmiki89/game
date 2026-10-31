@@ -28,6 +28,7 @@
                     <button class="nav-item" data-app="transfer"><span class="dot"></span>Überweisen</button>
                     <button class="nav-item" data-app="character"><span class="dot"></span>Charakter</button>
                     <button class="nav-item" data-app="rules"><span class="dot"></span>Regeln</button>
+                    <button class="nav-item hidden" data-app="admin" id="navAdmin"><span class="dot"></span>Admin</button>
                 </nav>
 
                 <div class="sidebar-footer">
@@ -215,6 +216,22 @@
                         <li><strong>Bugusing verboten:</strong> Melde Fehler, statt sie auszunutzen.</li>
                         <li><strong>Respekt:</strong> Keine Beleidigungen, Diskriminierung oder Belästigung – auch nicht im RP.</li>
                     </ol>
+                </section>
+
+                <!-- Admin (nur nach /admin <Passwort>) -->
+                <section class="panel" data-panel="admin">
+                    <header class="panel-head">
+                        <h2>Admin</h2>
+                        <p>Alle Spieler online – Fraktion zuweisen und zum HQ schicken.</p>
+                    </header>
+
+                    <div class="admin-toolbar">
+                        <span id="adminCount">0 Spieler online</span>
+                        <button type="button" class="ghost" id="adminRefresh">Aktualisieren</button>
+                    </div>
+
+                    <div class="admin-list" id="adminList"></div>
+                    <div class="feedback" id="adminFeedback"></div>
                 </section>
 
                 <!-- Ende der Panels -->

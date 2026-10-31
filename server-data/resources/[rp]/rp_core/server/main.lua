@@ -13,6 +13,7 @@
 local Players = {}   -- [serverId] = Profil (laufende Sitzung)
 local Profiles = {}  -- [license]  = Profil (dauerhaft gespeichert)
 local JoinedAt = {}  -- [serverId] = os.time()
+local Admins = {}    -- [serverId] = true (per /admin angemeldet)
 
 -- ---------------------------------------------------------------- Hilfsfunktionen
 
@@ -355,10 +356,165 @@ RegisterCommand('setfaction', function(src, args)
     print(('^2[rp_core]^7 Fraktion von ID %d gesetzt: %s'):format(targetId, label))
 end, false)
 
+-- ---------------------------------------------------------------- Admin
+
+do
+    local password = (GetConvar('rp_adminPassword', '') or ''):gsub('^%s+', ''):gsub('%s+$', '')
+    if password == '' or password == 'DEIN_PASSWORT_HIER' then
+        print('^3[rp_core]^7 Kein Admin-Passwort gesetzt - /admin bleibt gesperrt (server-data/admin.cfg).')
+    else
+        print('^2[rp_core]^7 Admin-Passwort geladen - Freischaltung per /admin <Passwort>.')
+    end
+end
+
+local function isAdmin(src)
+    src = tonumber(src)
+    if not src then return false end
+    if Admins[src] then return true end
+    return IsPlayerAceAllowed(src, 'rp.admin')
+end
+
+local function adminPlayerList()
+    local list = {}
+
+    for _, playerId in ipairs(GetPlayers()) do
+        local src = tonumber(playerId)
+        local profile = GetProfile(src)
+
+        if profile then
+            local name = GetPlayerName(src) or ('ID ' .. src)
+            if profile.firstName and profile.firstName ~= '' then
+                name = (profile.firstName .. ' ' .. profile.lastName):gsub('^%s+', ''):gsub('%s+$', '')
+            end
+
+            local factionId = profile.faction or 0
+            local faction = Config.Factions[factionId]
+
+            list[#list + 1] = {
+                id = src,
+                name = name,
+                faction = factionId,
+                factionShort = faction and faction.short or '',
+            }
+        end
+    end
+
+    table.sort(list, function(a, b) return a.id < b.id end)
+    return list
+end
+
+local function pushAdminData(src)
+    src = tonumber(src)
+    if not src then return end
+
+    local admin = isAdmin(src)
+    TriggerClientEvent('rp_core:client:adminData', src, {
+        admin = admin,
+        players = admin and adminPlayerList() or {},
+    })
+end
+
+-- /admin <passwort>  - Passwort steht in admin.cfg (Convar rp_adminPassword)
+RegisterCommand('admin', function(src, args)
+    src = tonumber(src)
+    if not src or src == 0 then
+        print('Der Befehl /admin ist nur im Spiel verfuegbar.')
+        return
+    end
+
+    local password = (GetConvar('rp_adminPassword', '') or ''):gsub('^%s+', ''):gsub('%s+$', '')
+    if password == '' or password == 'DEIN_PASSWORT_HIER' then
+        notify(src, 'Es ist kein Admin-Passwort gesetzt (server-data/admin.cfg).')
+        return
+    end
+
+    local given = args[1]
+    if not given then
+        notify(src, 'Benutzung: /admin <Passwort>')
+        return
+    end
+
+    if given ~= password then
+        notify(src, 'Falsches Passwort.')
+        return
+    end
+
+    Admins[src] = true
+    notify(src, 'Admin-Modus aktiviert - im Tablet gibt es jetzt den Tab "Admin".')
+    pushAdminData(src)
+end, false)
+
+-- Tablet fragt beim Oeffnen nach Admin-Rechten und Spielerliste
+RegisterNetEvent('rp_core:server:requestAdmin', function()
+    pushAdminData(source)
+end)
+
+RegisterNetEvent('rp_core:server:adminSetFaction', function(targetId, factionId)
+    local src = source
+    if not isAdmin(src) then return end
+
+    targetId = tonumber(targetId)
+    factionId = tonumber(factionId)
+
+    if not targetId or not factionId then return end
+    if factionId ~= 0 and not Config.Factions[factionId] then return end
+    if not GetProfile(targetId) then
+        notify(src, ('Spieler mit ID %d ist nicht online.'):format(targetId))
+        pushAdminData(src)
+        return
+    end
+
+    if not SetFaction(targetId, factionId) then
+        notify(src, 'Fraktion konnte nicht gesetzt werden.')
+        return
+    end
+
+    local label = 'keine Fraktion'
+    if factionId ~= 0 then
+        label = Config.Factions[factionId].short
+    end
+
+    notify(src, ('ID %d ist jetzt bei %s.'):format(targetId, label))
+    notify(targetId, ('Du wurdest der Fraktion %s zugewiesen.'):format(label))
+    pushAdminData(src)
+end)
+
+RegisterNetEvent('rp_core:server:adminSpawnHq', function(targetId)
+    local src = source
+    if not isAdmin(src) then return end
+
+    targetId = tonumber(targetId)
+    local profile = targetId and GetProfile(targetId)
+
+    if not profile then
+        notify(src, 'Spieler nicht online.')
+        return
+    end
+
+    local faction = Config.Factions[profile.faction or 0]
+    if not faction or not faction.hq then
+        notify(src, ('ID %d hat keine Fraktion mit Hauptquartier.'):format(targetId))
+        return
+    end
+
+    TriggerClientEvent('rp_core:client:spawnHq', targetId, {
+        x = faction.hq.x,
+        y = faction.hq.y,
+        z = faction.hq.z,
+        w = faction.hq.w,
+        label = faction.short,
+    })
+
+    notify(src, ('ID %d wurde zum HQ von %s geschickt.'):format(targetId, faction.short))
+    notify(targetId, ('Du wurdest zum Hauptquartier von %s gebracht.'):format(faction.short))
+end)
+
 -- ---------------------------------------------------------------- Sitzung
 
 AddEventHandler('playerDropped', function()
     local src = source
+    Admins[src] = nil
+
     local profile = Players[src]
     if not profile then return end
 

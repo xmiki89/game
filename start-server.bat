@@ -38,6 +38,12 @@ pause
 exit /b 1
 
 :start
+rem --- Admin-Passwort-Datei anlegen, falls sie fehlt ---
+if not exist admin.cfg (
+    copy admin.example.cfg admin.cfg >nul
+    echo Hinweis: admin.cfg wurde angelegt - Admin-Passwort darin aendern.
+)
+
 echo Starte FiveM Server (server.cfg)...
 echo Verbinden im Spiel mit:  connect localhost:30120
 echo.

@@ -24,6 +24,23 @@ exports('GetConfig', function()
     }
 end)
 
+-- Wird vom Admin-Tablet ausgeloest: Spieler zum HQ der Fraktion bringen
+RegisterNetEvent('rp_core:client:spawnHq', function(target)
+    if type(target) ~= 'table' then return end
+
+    local ped = PlayerPedId()
+
+    DoScreenFadeOut(350)
+    Wait(450)
+
+    RequestCollisionAtCoord(target.x, target.y, target.z)
+    SetEntityCoords(ped, target.x, target.y, target.z, false, false, false, false)
+    SetEntityHeading(ped, target.w or 0.0)
+
+    Wait(800)
+    DoScreenFadeIn(400)
+end)
+
 CreateThread(function()
     Wait(1000)
     TriggerServerEvent('rp_core:server:requestProfile')

@@ -19,12 +19,18 @@ const factionHint = document.getElementById('factionHint');
 const factionCard = document.getElementById('factionCard');
 const factionRouteBtn = document.getElementById('factionRoute');
 const factionBadge = document.getElementById('factionBadge');
+const navAdmin = document.getElementById('navAdmin');
+const adminList = document.getElementById('adminList');
+const adminCount = document.getElementById('adminCount');
+const adminFeedback = document.getElementById('adminFeedback');
 
 let profile = null;
 let serverInfo = null;
 let jobs = [];
 let selectedJobId = null;
 let factions = [];
+let adminPlayers = [];
+let isAdminUser = false;
 let ownFaction = 0;
 let selectedFactionId = null;
 let sending = false;
@@ -240,6 +246,110 @@ factionRouteBtn.addEventListener('click', () => {
     post('factionWaypoint', { id: selectedFactionId });
 });
 
+/* ------------------------------------------------------------ Admin */
+
+function currentApp() {
+    const active = document.querySelector('.nav-item.active');
+    return active ? active.dataset.app : null;
+}
+
+function factionOptions(selected) {
+    const select = document.createElement('select');
+    select.className = 'admin-faction';
+
+    const none = document.createElement('option');
+    none.value = '0';
+    none.textContent = 'Keine Fraktion';
+    select.append(none);
+
+    factions.forEach((faction) => {
+        const option = document.createElement('option');
+        option.value = String(faction.id);
+        option.textContent = faction.short;
+        select.append(option);
+    });
+
+    select.value = String(Number(selected) || 0);
+    return select;
+}
+
+function renderAdminRows() {
+    adminList.replaceChildren();
+
+    if (!adminPlayers.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.innerHTML = '<strong>Niemand online</strong><span>Aktuell sind keine Spieler auf dem Server.</span>';
+        adminList.append(empty);
+        return;
+    }
+
+    adminPlayers.forEach((player) => {
+        const row = document.createElement('div');
+        row.className = 'admin-row';
+
+        const id = document.createElement('span');
+        id.className = 'admin-id';
+        id.textContent = `#${player.id}`;
+
+        const name = document.createElement('div');
+        name.className = 'admin-name';
+        const strong = document.createElement('strong');
+        strong.textContent = player.name || `ID ${player.id}`;
+        const factionText = document.createElement('span');
+        factionText.textContent = player.factionShort || 'Keine Fraktion';
+        factionText.classList.toggle('has-faction', Boolean(player.factionShort));
+        name.append(strong, factionText);
+
+        const select = factionOptions(player.faction);
+
+        const setBtn = document.createElement('button');
+        setBtn.type = 'button';
+        setBtn.className = 'ghost primary-ghost';
+        setBtn.textContent = 'Setzen';
+        setBtn.addEventListener('click', () => {
+            adminFeedback.textContent = `Fraktion für #${player.id} wird gesetzt…`;
+            adminFeedback.classList.remove('error');
+            post('adminSetFaction', { targetId: player.id, factionId: Number(select.value) });
+        });
+
+        const spawnBtn = document.createElement('button');
+        spawnBtn.type = 'button';
+        spawnBtn.className = 'ghost';
+        spawnBtn.textContent = 'Spawn HQ';
+        spawnBtn.addEventListener('click', () => {
+            adminFeedback.textContent = `#${player.id} wird zum HQ geschickt…`;
+            adminFeedback.classList.remove('error');
+            post('adminSpawn', { targetId: player.id });
+        });
+
+        row.append(id, name, select, setBtn, spawnBtn);
+        adminList.append(row);
+    });
+}
+
+function renderAdmin(data) {
+    isAdminUser = Boolean(data && data.admin);
+    navAdmin.classList.toggle('hidden', !isAdminUser);
+
+    if (!isAdminUser) {
+        adminPlayers = [];
+        adminList.replaceChildren();
+        adminFeedback.textContent = '';
+        if (currentApp() === 'admin') switchApp('overview');
+        return;
+    }
+
+    adminPlayers = Array.isArray(data.players) ? data.players : [];
+    adminCount.textContent = `${adminPlayers.length} Spieler online`;
+    adminFeedback.textContent = '';
+    renderAdminRows();
+}
+
+document.getElementById('adminRefresh').addEventListener('click', () => {
+    post('adminRefresh');
+});
+
 /* ------------------------------------------------------------ Überweisung */
 
 document.getElementById('quickAmounts').addEventListener('click', (event) => {
@@ -315,6 +425,10 @@ window.addEventListener('message', (event) => {
 
     if (data.action === 'faction') {
         renderFaction(data.data);
+    }
+
+    if (data.action === 'admin') {
+        renderAdmin(data.data);
     }
 
     if (data.action === 'serverInfo') {
