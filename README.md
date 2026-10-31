@@ -11,7 +11,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | `rp_character` | Charaktererstellung beim ersten Join (Vor-/Nachname, Geburtsdatum, Geschlecht), Model + Spawn |
 | `rp_hud` | HUD: Bargeld, Bank, Job, Server-ID, Uhrzeit |
 | `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (LSPD mit HQ + Route), Überweisen, Charakter, Regeln, Admin (nur nach `/admin <Passwort>`) |
-| `rp_menu` | Kreismenü auf **G** – erscheint nur für Fraktion Nr. 1 (LSPD), aktuell mit dem Eintrag **Bodycam** (noch ohne Funktion) |
+| `rp_menu` | Kreismenü auf **G** – erscheint nur für Fraktion Nr. 1 (LSPD), Eintrag **Bodycam** legt die Körperkamera an die Brust (an/aus) |
 | `mapmanager`, `spawnmanager`, `chat` | offizielle Cfx.re-Basissysteme – ohne sie spawnt kein Spieler und es gibt keinen Chat |
 
 ## Voraussetzungen
@@ -131,8 +131,13 @@ setfaction 1 1
 Das ist `setfaction <Server-ID> <Fraktionsnummer>`; `setfaction 1 0` nimmt die Fraktion wieder weg.
 Im Spiel funktioniert der Befehl nur mit Admin-Rechten (`rp.admin`, siehe Schritt 2 der Installation).
 
-Mit Fraktion Nr. 1 siehst du außerdem das Kreismenü auf **G**. Es ist bewusst leer – der einzige
-Eintrag ist **Bodycam**, der noch nichts tut.
+Mit Fraktion Nr. 1 siehst du außerdem das Kreismenü auf **G**. Der einzige Eintrag ist **Bodycam**:
+ein Klick legt die Körperkamera an die Brust, ein weiterer Klick zieht sie wieder aus. Das Menü
+bleibt dabei offen und zeigt unten „Bodycam angelegt“ bzw. „Bodycam ausgezogen“.
+
+Das Prop-Modell steht in [`rp_menu/client.lua`](server-data/resources/%5Brp%5D/rp_menu/client.lua) in `BodycamModels`
+(das erste Modell, das im Spiel vorhanden ist, wird genommen), Position an der Brust in
+`BodycamOffset` / `BodycamRotation`. Bei eigenem Addon-Prop einfach dessen Modellnamen dort eintragen.
 
 Neue Fraktionen: einfach einen weiteren Eintrag mit der nächsten Nummer in `Config.Factions` anlegen –
 Tablet und Kreismenü lesen die Liste automatisch. Für ein neues Kreismenü-Fraktionsmitglied in

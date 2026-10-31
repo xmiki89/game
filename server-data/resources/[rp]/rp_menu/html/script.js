@@ -26,11 +26,13 @@ function post(name, data) {
 function showHint(message, isError) {
     hubHint.textContent = message;
     hubHint.classList.toggle('error', Boolean(isError));
+    hubHint.classList.toggle('ok', isError === false);
 
     if (hintTimer) clearTimeout(hintTimer);
     hintTimer = setTimeout(() => {
         hubHint.textContent = 'Menü';
         hubHint.classList.remove('error');
+        hubHint.classList.remove('ok');
     }, 2600);
 }
 
@@ -84,6 +86,7 @@ window.addEventListener('message', (event) => {
         hubShort.textContent = FACTION_SHORT[payload.faction] || 'FRAKTION';
         hubHint.textContent = 'Menü';
         hubHint.classList.remove('error');
+        hubHint.classList.remove('ok');
 
         buildSlots(entries);
         menu.classList.remove('hidden');
@@ -96,7 +99,7 @@ window.addEventListener('message', (event) => {
 
     if (data.action === 'hint') {
         const payload = data.data || {};
-        showHint(payload.message || 'Noch nicht verfügbar.', true);
+        showHint(payload.message || 'Noch nicht verfügbar.', payload.error === true);
     }
 });
 

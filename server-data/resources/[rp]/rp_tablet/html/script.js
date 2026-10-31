@@ -409,6 +409,12 @@ window.addEventListener('message', (event) => {
         showFeedback(true, '');
         amountInput.value = '';
         targetIdInput.value = '';
+
+        // Admin-Bereich erst zeigen, wenn der Server die Rechte bestätigt hat
+        navAdmin.classList.add('hidden');
+        adminPlayers = [];
+        adminList.replaceChildren();
+        adminFeedback.textContent = '';
     }
 
     if (data.action === 'close') {

@@ -91,6 +91,10 @@ body {
     color: #ffb37a;
 }
 
+.hub-hint.ok {
+    color: #7ee787;
+}
+
 .slot {
     position: absolute;
     display: flex;
