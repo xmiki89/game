@@ -439,6 +439,61 @@ nav {
     color: #8497a8;
 }
 
+/* Fraktion */
+
+.faction-status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 22px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(111, 212, 255, 0.16);
+    background: rgba(111, 212, 255, 0.06);
+}
+
+.faction-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #041018;
+    background: linear-gradient(135deg, #7fe0ff, #45a9dc);
+}
+
+.faction-badge.empty {
+    color: #7d8fa0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(255, 255, 255, 0.16);
+}
+
+.faction-status-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.faction-status-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #eaf7ff;
+}
+
+.faction-status-text span {
+    font-size: 12px;
+    color: #8497a8;
+}
+
+#factionRoute {
+    margin-top: 18px;
+}
+
 /* Überweisung */
 
 form {

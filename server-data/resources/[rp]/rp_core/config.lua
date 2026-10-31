@@ -18,3 +18,21 @@ Config.SaveInterval = 5 * 60 * 1000
 -- Taste zum Öffnen des Tablets: 173 = Pfeil runter (INPUT_FRONTEND_DOWN)
 -- Andere Tasten-IDs: https://docs.fivem.net/docs/game-references/controls/
 Config.TabletControl = 173
+
+-- Fraktion bei der Charaktererstellung (0 = keine Fraktion)
+Config.StartFaction = 0
+
+-- Fraktionen: Der Tabellenschlüssel ist die Fraktionsnummer.
+-- Neue Fraktionen einfach mit der nächsten Nummer ergänzen.
+Config.Factions = {
+    [1] = {
+        id = 1,
+        short = 'LSPD',
+        name = 'Los Santos Police Department',
+        kind = 'Behörde',
+        description = 'Die Polizei von Los Santos. Streifendienst in der City, Verkehrskontrollen, Absicherung von Einsätzen und Schutz der Bürger.',
+        hqName = 'Mission Row Police Station',
+        -- 440.2348, -983.1437, 33.0029, Blickrichtung 269.4280
+        hq = vector4(440.2348, -983.1437, 33.0029, 269.4280),
+    },
+}

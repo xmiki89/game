@@ -10,7 +10,8 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | `rp_core` | Spielerdaten, Bargeld + Bank, Job, Speicherung (`data/players.json`), Banküberweisungen |
 | `rp_character` | Charaktererstellung beim ersten Join (Vor-/Nachname, Geburtsdatum, Geschlecht), Model + Spawn |
 | `rp_hud` | HUD: Bargeld, Bank, Job, Server-ID, Uhrzeit |
-| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (noch leer), Überweisen, Charakter, Regeln |
+| `rp_tablet` | Tablet-Menü auf **Pfeil runter**: Übersicht, Jobs (Standort + Route auf der Karte), Fraktion (LSPD mit HQ + Route), Überweisen, Charakter, Regeln |
+| `rp_menu` | Kreismenü auf **G** – erscheint nur für Fraktion Nr. 1 (LSPD), aktuell mit dem Eintrag **Bodycam** (noch ohne Funktion) |
 | `mapmanager`, `spawnmanager`, `chat` | offizielle Cfx.re-Basissysteme – ohne sie spawnt kein Spieler und es gibt keinen Chat |
 
 ## Voraussetzungen
@@ -47,7 +48,7 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 
    Wichtig: FXServer muss **aus dem Ordner `server-data`** gestartet werden, sonst findet er den
    Ordner `resources/` nicht. Beim Start müssen die Zeilen
-   `Started resource rp_core`, `rp_character`, `rp_hud` und `rp_tablet` erscheinen.
+   `Started resource rp_core`, `rp_character`, `rp_hud`, `rp_tablet` und `rp_menu` erscheinen.
 
 4. **Verbinden** – im FiveM-Client mit der Konsole (`F8`):
 
@@ -63,9 +64,39 @@ Kein ESX, kein QBCore – das Framework ist komplett standalone und ohne Datenba
 | --- | --- |
 | Tablet öffnen/schließen | **Pfeil runter** (oder Chat-Befehl `/tablet`) |
 | Tablet schließen | `ESC` |
+| Kreismenü öffnen/schließen (nur Fraktion 1) | **G** (oder Chat-Befehl `/factionmenu`) |
+| Kreismenü schließen | `ESC` |
+
+Die Taste **G** lässt sich in den FiveM-Einstellungen unter *Einstellungen → Tastenbelegung → FiveM*
+neu belegen. Der Eintrag heißt dort „Kreismenü (Fraktion)“.
 
 Die Taste ist in [`rp_core/config.lua`](server-data/resources/%5Brp%5D/rp_core/config.lua) über `Config.TabletControl` änderbar
 (173 = Pfeil runter, siehe [Control-Liste](https://docs.fivem.net/docs/game-references/controls/)).
+
+## Fraktionen
+
+Fraktionen stehen in [`rp_core/config.lua`](server-data/resources/%5Brp%5D/rp_core/config.lua) unter `Config.Factions`.
+Der Tabellenschlüssel ist die Fraktionsnummer.
+
+| Nr. | Kürzel | Name | HQ |
+| --- | --- | --- | --- |
+| 1 | LSPD | Los Santos Police Department | Mission Row Police Station – `440.23, -983.14, 33.00` |
+
+**Fraktion vergeben** – in der txAdmin-Konsole (oder FXServer-Konsole):
+
+```
+setfaction 1 1
+```
+
+Das ist `setfaction <Server-ID> <Fraktionsnummer>`; `setfaction 1 0` nimmt die Fraktion wieder weg.
+Im Spiel funktioniert der Befehl nur mit Admin-Rechten (`rp.admin`, siehe Schritt 2 der Installation).
+
+Mit Fraktion Nr. 1 siehst du außerdem das Kreismenü auf **G**. Es ist bewusst leer – der einzige
+Eintrag ist **Bodycam**, der noch nichts tut.
+
+Neue Fraktionen: einfach einen weiteren Eintrag mit der nächsten Nummer in `Config.Factions` anlegen –
+Tablet und Kreismenü lesen die Liste automatisch. Für ein neues Kreismenü-Fraktionsmitglied in
+[`rp_menu/client.lua`](server-data/resources/%5Brp%5D/rp_menu/client.lua) die Nummer in `AllowedFactions` ergänzen.
 
 ## Erster Start / erster Join
 
@@ -94,7 +125,8 @@ server-data/
         ├── rp_core/              Framework: Profile, Geld, Speicherung
         ├── rp_character/         Charaktererstellung + Spawn
         ├── rp_hud/               HUD
-        └── rp_tablet/            Tablet (NUI)
+        ├── rp_tablet/            Tablet (NUI)
+        └── rp_menu/              Kreismenü auf G (NUI)
 ```
 
 ## Für andere Ressourcen (Exports von `rp_core`)
@@ -104,10 +136,12 @@ local profile = exports.rp_core:GetProfile(source)     -- Profil eines Spielers
 exports.rp_core:AddMoney(source, 250, 'cash')          -- Geld geben ('cash' oder 'bank')
 exports.rp_core:RemoveMoney(source, 100, 'bank')       -- Geld abziehen
 local cash = exports.rp_core:GetMoney(source, 'cash')  -- Kontostand lesen
+local faction = exports.rp_core:GetFaction(source)      -- Fraktionsnummer (0 = keine)
+exports.rp_core:SetFaction(source, 1)                  -- Fraktion setzen (1 = LSPD)
 ```
 
 Clientseitig verschickt `rp_core` bei jeder Änderung das Event `rp_core:client:profile`
-(enthält `serverId`, `firstName`, `lastName`, `birthdate`, `gender`, `job`, `cash`, `bank`).
+(enthält `serverId`, `firstName`, `lastName`, `birthdate`, `gender`, `job`, `faction`, `cash`, `bank`).
 
 ## Wenn der Server nicht startet
 

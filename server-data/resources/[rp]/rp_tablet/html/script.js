@@ -14,11 +14,19 @@ const jobList = document.getElementById('jobList');
 const jobHint = document.getElementById('jobHint');
 const jobCard = document.getElementById('jobCard');
 const jobRouteBtn = document.getElementById('jobRoute');
+const factionList = document.getElementById('factionList');
+const factionHint = document.getElementById('factionHint');
+const factionCard = document.getElementById('factionCard');
+const factionRouteBtn = document.getElementById('factionRoute');
+const factionBadge = document.getElementById('factionBadge');
 
 let profile = null;
 let serverInfo = null;
 let jobs = [];
 let selectedJobId = null;
+let factions = [];
+let ownFaction = 0;
+let selectedFactionId = null;
 let sending = false;
 
 /* ------------------------------------------------------------ Hilfen */
@@ -154,6 +162,85 @@ jobRouteBtn.addEventListener('click', () => {
     post('waypoint', { id: selectedJobId });
 });
 
+/* ------------------------------------------------------------ Fraktion */
+
+function renderFactionStatus(faction) {
+    if (faction) {
+        factionBadge.textContent = faction.short || '?';
+        factionBadge.classList.remove('empty');
+        setText('factionStatusName', faction.name || faction.short);
+        setText('factionStatusNote', `Mitglied von Fraktion Nr. ${faction.number} · ${faction.hqName}`);
+        return;
+    }
+
+    factionBadge.textContent = '-';
+    factionBadge.classList.add('empty');
+    setText('factionStatusName', 'Keine Fraktion');
+    setText('factionStatusNote', 'Du gehörst aktuell keiner Fraktion an.');
+}
+
+function selectFaction(factionId) {
+    const faction = factions.find((entry) => entry.id === factionId);
+    if (!faction) return;
+
+    selectedFactionId = faction.id;
+    factionHint.classList.add('hidden');
+    factionCard.classList.remove('hidden');
+
+    document.querySelectorAll('#factionList .job-item').forEach((item) => {
+        item.classList.toggle('active', Number(item.dataset.id) === faction.id);
+    });
+
+    setText('factionTitle', faction.name);
+    setText('factionKind', faction.kind);
+    setText('factionDescription', faction.description);
+    setText('factionNumber', faction.number);
+    setText('factionHq', faction.hqName);
+}
+
+function renderFaction(data) {
+    factions = Array.isArray(data && data.list) ? data.list : [];
+    ownFaction = Number(data && data.own) || 0;
+
+    renderFactionStatus(factions.find((entry) => entry.number === ownFaction));
+
+    factionList.replaceChildren();
+    selectedFactionId = null;
+
+    if (!factions.length) {
+        factionHint.classList.remove('hidden');
+        factionCard.classList.add('hidden');
+        factionHint.querySelector('strong').textContent = 'Keine Fraktionen eingetragen';
+        return;
+    }
+
+    factions.forEach((faction) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'job-item';
+        button.dataset.id = faction.id;
+
+        const label = document.createElement('span');
+        label.className = 'job-item-label';
+        label.textContent = `${faction.short} · Nr. ${faction.number}`;
+
+        const company = document.createElement('span');
+        company.className = 'job-item-company';
+        company.textContent = faction.name;
+
+        button.append(label, company);
+        button.addEventListener('click', () => selectFaction(faction.id));
+        factionList.append(button);
+    });
+
+    selectFaction((factions.find((entry) => entry.number === ownFaction) || factions[0]).id);
+}
+
+factionRouteBtn.addEventListener('click', () => {
+    if (!selectedFactionId) return;
+    post('factionWaypoint', { id: selectedFactionId });
+});
+
 /* ------------------------------------------------------------ Überweisung */
 
 document.getElementById('quickAmounts').addEventListener('click', (event) => {
@@ -225,6 +312,10 @@ window.addEventListener('message', (event) => {
 
     if (data.action === 'jobs') {
         renderJobs(data.data);
+    }
+
+    if (data.action === 'faction') {
+        renderFaction(data.data);
     }
 
     if (data.action === 'serverInfo') {

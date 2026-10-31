@@ -55,6 +55,14 @@ local function loadDatabase()
         print('^1[rp_core] data/players.json ist beschaedigt - es wird leer gestartet.^7')
         return {}
     end
+
+    -- Alte Profile ohne Fraktion nachtragen
+    for _, profile in pairs(decoded) do
+        if type(profile) == 'table' and profile.faction == nil then
+            profile.faction = Config.StartFaction or 0
+        end
+    end
+
     return decoded
 end
 
@@ -86,6 +94,7 @@ local function createProfile(license)
         birthdate = '',
         gender = 'm',              -- 'm' oder 'f'
         job = Config.StartJob,
+        faction = Config.StartFaction or 0,  -- Fraktionsnummer, 0 = keine
         cash = Config.StartCash,
         bank = Config.StartBank,
         playtime = 0,              -- Spielzeit in Sekunden
@@ -103,6 +112,7 @@ local function publicProfile(src, profile)
         birthdate = profile.birthdate,
         gender = profile.gender,
         job = profile.job,
+        faction = profile.faction or 0,
         cash = profile.cash,
         bank = profile.bank,
     }
@@ -173,10 +183,31 @@ function GetMoney(src, account)
     return profile[account]
 end
 
+function GetFaction(src)
+    local profile = GetProfile(src)
+    return profile and (profile.faction or 0) or 0
+end
+
+function SetFaction(src, factionId)
+    local profile = GetProfile(src)
+    if not profile then return false end
+
+    factionId = tonumber(factionId)
+    if not factionId then return false end
+    if factionId ~= 0 and not Config.Factions[factionId] then return false end
+
+    profile.faction = factionId
+    pushProfile(src)
+    saveDatabase()
+    return true
+end
+
 exports('GetProfile', GetProfile)
 exports('AddMoney', AddMoney)
 exports('RemoveMoney', RemoveMoney)
 exports('GetMoney', GetMoney)
+exports('GetFaction', GetFaction)
+exports('SetFaction', SetFaction)
 
 -- ---------------------------------------------------------------- Events: Client
 
@@ -276,6 +307,53 @@ RegisterNetEvent('rp_core:server:characterSave', function(payload)
     TriggerClientEvent('rp_character:client:saved', src, true)
     notify(src, ('Willkommen in Los Santos, %s %s!'):format(firstName, lastName))
 end)
+
+-- ---------------------------------------------------------------- Fraktion
+
+-- Setzt die Fraktion eines Spielers.
+-- Konsole/txAdmin:  setfaction 1 1   (Server-ID 1 -> Fraktion Nr. 1)
+-- Im Spiel nur mit Admin-Rechten (rp.admin).
+RegisterCommand('setfaction', function(src, args)
+    local targetId = tonumber(args[1])
+    local factionId = tonumber(args[2])
+
+    if src ~= 0 and not IsPlayerAceAllowed(src, 'rp.admin') then
+        notify(src, 'Keine Berechtigung fuer diesen Befehl.')
+        return
+    end
+
+    local usage = 'Benutzung: setfaction <serverId> <fraktionNr>  (0 = keine Fraktion)'
+    if not targetId or not factionId then
+        if src == 0 then print(usage) else notify(src, usage) end
+        return
+    end
+
+    if factionId ~= 0 and not Config.Factions[factionId] then
+        local message = ('Unbekannte Fraktion Nr. %d.'):format(factionId)
+        if src == 0 then print(message) else notify(src, message) end
+        return
+    end
+
+    if not GetProfile(targetId) then
+        local message = ('Spieler mit ID %d ist nicht online.'):format(targetId)
+        if src == 0 then print(message) else notify(src, message) end
+        return
+    end
+
+    if not SetFaction(targetId, factionId) then
+        local message = 'Fraktion konnte nicht gesetzt werden.'
+        if src == 0 then print(message) else notify(src, message) end
+        return
+    end
+
+    local label = 'keine Fraktion'
+    if factionId ~= 0 then
+        label = ('%s (Nr. %d)'):format(Config.Factions[factionId].short, factionId)
+    end
+
+    notify(targetId, ('Deine Fraktion: %s'):format(label))
+    print(('^2[rp_core]^7 Fraktion von ID %d gesetzt: %s'):format(targetId, label))
+end, false)
 
 -- ---------------------------------------------------------------- Sitzung
 

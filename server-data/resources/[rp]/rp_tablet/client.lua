@@ -77,6 +77,40 @@ local function jobListForUi()
     return list
 end
 
+-- Fraktionen fuer die NUI aufbereiten (gleiche Form wie die Jobliste)
+local function factionListForUi()
+    local list = {}
+    local factions = (config and config.factions) or {}
+
+    for id, faction in pairs(factions) do
+        list[#list + 1] = {
+            id = id,
+            number = faction.id or id,
+            short = faction.short or '?',
+            name = faction.name or '-',
+            kind = faction.kind or 'Fraktion',
+            description = faction.description or '',
+            hqName = faction.hqName or 'Hauptquartier',
+            x = faction.hq and faction.hq.x or 0.0,
+            y = faction.hq and faction.hq.y or 0.0,
+            z = faction.hq and faction.hq.z or 0.0,
+        }
+    end
+
+    table.sort(list, function(a, b) return a.number < b.number end)
+    return list
+end
+
+local function sendFactionInfo()
+    SendNUIMessage({
+        action = 'faction',
+        data = {
+            own = (profile and profile.faction) or 0,
+            list = factionListForUi(),
+        },
+    })
+end
+
 local function sendServerInfo()
     SendNUIMessage({
         action = 'serverInfo',
@@ -98,6 +132,7 @@ local function setOpen(state)
     if state then
         SendNUIMessage({ action = 'profile', data = profile })
         SendNUIMessage({ action = 'jobs', data = jobListForUi() })
+        sendFactionInfo()
         sendServerInfo()
     end
 end
@@ -106,6 +141,7 @@ RegisterNetEvent('rp_core:client:profile', function(data)
     profile = data
     if isOpen then
         SendNUIMessage({ action = 'profile', data = profile })
+        sendFactionInfo()
     end
 end)
 
@@ -162,6 +198,21 @@ RegisterNUICallback('waypoint', function(data, cb)
 
     cb({ ok = true })
     SetNewWaypoint(job.coords.x, job.coords.y)
+    setOpen(false)
+end)
+
+-- Fraktion anklicken: Route zum Hauptquartier setzen und Tablet schliessen
+RegisterNUICallback('factionWaypoint', function(data, cb)
+    local factionId = tonumber(data and data.id)
+    local faction = (config and config.factions) and config.factions[factionId] or nil
+
+    if not faction or not faction.hq then
+        cb({ ok = false })
+        return
+    end
+
+    cb({ ok = true })
+    SetNewWaypoint(faction.hq.x, faction.hq.y)
     setOpen(false)
 end)
 

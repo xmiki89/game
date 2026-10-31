@@ -20,6 +20,7 @@ exports('GetConfig', function()
         serverName = Config.ServerName,
         spawn = Config.Spawn,
         tabletControl = Config.TabletControl,
+        factions = Config.Factions,
     }
 end)
 
