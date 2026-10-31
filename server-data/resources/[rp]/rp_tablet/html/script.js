@@ -169,7 +169,7 @@ function renderFactionStatus(faction) {
         factionBadge.textContent = faction.short || '?';
         factionBadge.classList.remove('empty');
         setText('factionStatusName', faction.name || faction.short);
-        setText('factionStatusNote', `Mitglied von Fraktion Nr. ${faction.number} · ${faction.hqName}`);
+        setText('factionStatusNote', `Mitglied · ${faction.hqName}`);
         return;
     }
 
@@ -194,7 +194,6 @@ function selectFaction(factionId) {
     setText('factionTitle', faction.name);
     setText('factionKind', faction.kind);
     setText('factionDescription', faction.description);
-    setText('factionNumber', faction.number);
     setText('factionHq', faction.hqName);
 }
 
@@ -222,7 +221,7 @@ function renderFaction(data) {
 
         const label = document.createElement('span');
         label.className = 'job-item-label';
-        label.textContent = `${faction.short} · Nr. ${faction.number}`;
+        label.textContent = faction.short;
 
         const company = document.createElement('span');
         company.className = 'job-item-company';
